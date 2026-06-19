@@ -16,6 +16,7 @@ import (
 	"golang.org/x/crypto/ssh"
 	"gopkg.in/yaml.v3"
 	"github.com/charmbracelet/lipgloss"
+	"encoding/base64"
 )
 
 var (
@@ -71,10 +72,15 @@ func main() {
 		NoClientAuth: true, // demo only
 	}
 
-	keyBytes, err := os.ReadFile("server_key")
-	if err != nil {
-		log.Fatal("missing server_key: ssh-keygen -t rsa -f server_key")
-	}
+	keyB64 := os.Getenv("SERVER_KEY")
+if keyB64 == "" {
+	log.Fatal("SERVER_KEY is empty")
+}
+
+keyBytes, err := base64.StdEncoding.DecodeString(keyB64)
+if err != nil {
+	log.Fatal("invalid base64 server key:", err)
+}
 
 	signer, err := ssh.ParsePrivateKey(keyBytes)
 	if err != nil {

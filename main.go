@@ -72,10 +72,15 @@ func main() {
 	config := &ssh.ServerConfig{
 		NoClientAuth: true, // demo only
 	}
+	env := os.Getenv("APP_ENV")
 	
+	if env != "production" {
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
+	}
+
 	}
 
 	keyB64 := os.Getenv("SERVER_KEY")
